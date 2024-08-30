@@ -8,6 +8,7 @@ COPY src src
 COPY build.gradle .
 COPY settings.gradle .
 
+RUN chmod 777 gradlew
 RUN ./gradlew bootjar
 
 FROM openjdk:11
