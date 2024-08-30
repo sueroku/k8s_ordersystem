@@ -33,13 +33,13 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
 logging:
   level:
     root: info
 jwt:
-  expiration: 5
+  expiration: 1440
   secretKey: ${JWT_SECRET}
   expirationRt: 14400
   secretKeyRt: ${JWT_SECRET_RT}
