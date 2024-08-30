@@ -53,13 +53,16 @@ public class ProductService {
         try{
             product = productRepository.save(dto.toEntity());
             byte[] bytes = image.getBytes();
-            Path path = Paths.get("C:/Users/Playdata/Desktop/tmp",
-                    product.getId()+ "_" + image.getOriginalFilename());
-            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            product.updateImagePath(path.toString());
-            if(dto.getName().contains("sale")){
-                stockInventoryService.increaseStop(product.getId(), dto.getStockQuantity());
-            }
+            String fileName = product.getId()+ "_" + image.getOriginalFilename();
+            Path path = Paths.get("/tmp/", fileName);
+            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE); // local pc에 임시 저장
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileName)
+                    .build();
+            PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
+            String s3Path = s3Client.utilities().getUrl(a->a.bucket(bucket).key(fileName)).toExternalForm();
+            product.updateImagePath(s3Path);
         }catch (IOException e){ // 트라이-캐치 때문에 트랜잭션 처리때문에
             throw new RuntimeException("이미지 저장 실패"); // 여기서 예외를 던져용
         }
