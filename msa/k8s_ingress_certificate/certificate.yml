@@ -1,0 +1,32 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: suguri
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: hello@naver.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: suguri-com-tls
+  namespace: suguri
+spec:
+  secretName: suguri-com-tls
+  duration: 2160h # 90일
+  renewBefore: 360h # 15일 전에 갱신
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: server.suguri.store
+  dnsNames:
+  - server.suguri.store
