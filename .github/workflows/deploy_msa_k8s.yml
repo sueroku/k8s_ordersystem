@@ -48,12 +48,12 @@ jobs:
           REGISTRY: 346903264902.dkr.ecr.ap-northeast-2.amazonaws.com
           REPOSITORY: suguri-order
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:latest -f ./msa/order/Dockerfile ./msa/order
+          docker build -t $REGISTRY/$REPOSITORY:latest -f ./msa/ordering/Dockerfile ./msa/ordering
           docker push $REGISTRY/$REPOSITORY:latest
 
       - name: eks kubectl apply
         run: |
-          kubectl apply -f ./msa/order/k8s/ordersystem_order_depl.yml
+          kubectl apply -f ./msa/ordering/k8s/ordersystem_order_depl.yml
           kubectl rollout restart deployment ordersystem-order-deployment -n suguri
 
       - name: build and push docker product-images to ecr
